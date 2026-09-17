@@ -1,0 +1,17 @@
+{
+  "name": "jevjack",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@oxlint/plugins": "1.83.0",
+    "@types/bun": "latest",
+    "oxlint": "1.83.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@typesafe-ai/sdk": "^0.6.0"
+  }
+}

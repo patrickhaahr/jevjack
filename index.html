@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>jevjack — Jev plays blackjack</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header>
+    <span class="brand">jevjack</span>
+    <span class="model-tag" id="model-tag">model: ?</span>
+    <span class="spacer"></span>
+    <span class="dot" id="conn-dot"></span>
+    <span id="conn-label">connecting</span>
+  </header>
+
+  <main>
+    <section class="table-wrap">
+      <div class="dealer-row">
+        <div class="seat-label">dealer</div>
+        <div class="cards" id="dealer-cards"></div>
+        <div class="hand-total" id="dealer-total"></div>
+      </div>
+
+      <div class="table-center" id="table-message">Press run to deal.</div>
+
+      <div class="player-row">
+        <div class="cards" id="player-cards"></div>
+        <div class="hand-total" id="player-total"></div>
+        <div class="seat-label">jev</div>
+      </div>
+
+      <div class="controls">
+        <button id="btn-run" class="primary">Run</button>
+        <button id="btn-step">Step one hand</button>
+        <button id="btn-stop">Pause</button>
+        <button id="btn-reset">Reset</button>
+        <span class="spacer"></span>
+        <span id="hand-count">hand 0</span>
+        <span id="shoe-meter" title="fraction of shoe remaining">shoe —</span>
+        <span id="count-tag" title="Hi-Lo true count">count —</span>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <h2>Decision</h2>
+      <div class="prob-rows" id="prob-rows">
+        <div class="empty">Waiting for the first hand.</div>
+      </div>
+      <div class="scores">
+        <div class="score-row">
+          <span class="score-label">win odds</span>
+          <div class="score-track"><div class="score-fill" id="win-fill"></div></div>
+          <span class="score-value" id="win-value">—</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">hand quality</span>
+          <div class="score-track"><div class="score-fill" id="quality-fill"></div></div>
+          <span class="score-value" id="quality-value">—</span>
+        </div>
+        <div class="meta-row">
+          <span id="latency">— ms</span>
+          <span id="tokens">— tok</span>
+          <span id="confidence">conf —</span>
+        </div>
+      </div>
+
+      <h2>Bankroll</h2>
+      <div class="bankroll-head">
+        <span class="bankroll-value" id="bankroll">$1,000</span>
+        <span class="bankroll-delta" id="bankroll-delta">±$0</span>
+      </div>
+      <canvas id="bankroll-chart" width="360" height="90"></canvas>
+
+      <h2>Hand log</h2>
+      <ol id="hand-log" class="hand-log"></ol>
+    </aside>
+  </main>
+
+  <script type="module" src="/ui.js"></script>
+</body>
+</html>
