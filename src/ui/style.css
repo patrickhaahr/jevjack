@@ -245,10 +245,10 @@ main {
     transform: translateY(-20px) rotate(-5deg) scale(0.9);
   }
 }
-.card-in { animation: card-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
-.card-in:nth-child(2) { animation-delay: 70ms; }
-.card-in:nth-child(3) { animation-delay: 140ms; }
-.card-in:nth-child(n + 4) { animation-delay: 210ms; }
+.card-in { animation: card-in 140ms cubic-bezier(0.2, 0.8, 0.2, 1) backwards; }
+.card-in:nth-child(2) { animation-delay: 25ms; }
+.card-in:nth-child(3) { animation-delay: 50ms; }
+.card-in:nth-child(n + 4) { animation-delay: 75ms; }
 
 /* ---------- glass controls ---------- */
 .controls {

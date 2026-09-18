@@ -11,7 +11,7 @@ import { basicStrategyAction, createModel } from "./jev/jev";
 
 const PORT = Number(process.env.PORT ?? 3000);
 
-const DECISION_PAUSE_MS = Number(process.env.DECISION_PAUSE_MS ?? 400);
+const DECISION_PAUSE_MS = Number(process.env.DECISION_PAUSE_MS ?? 0);
 
 // Set DECISION_LOG to a path to append every decision and settlement as JSONL.
 const DECISION_LOG = process.env.DECISION_LOG ?? "";
