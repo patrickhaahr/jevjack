@@ -22,9 +22,18 @@ import {
   type HandOutcome,
   type PlayerAction,
 } from "../engine/engine";
-import { buildJevState, type JevDecision, type JevState, type Model } from "../jev/jev";
+import { buildJevState, type JevDecision, type Model } from "../jev/jev";
 
 export type Phase = "idle" | "dealing" | "player" | "dealer" | "settled";
+
+/** One player hand in play: the cards on it, the bet riding on it, and the
+ *  actions taken so far. Splits push a sibling onto the list. */
+interface PlayerHand {
+  cards: Card[];
+  bet: number;
+  surrendered: boolean;
+  actions: PlayerAction[];
+}
 
 export interface HandRecord {
   hand: number;
@@ -209,7 +218,8 @@ export class Game {
 
   private async playerPhase(): Promise<void> {
     this.phase = "player";
-    const hands: { cards: Card[]; bet: number; surrendered: boolean; actions: PlayerAction[] }[] = [
+
+    const hands: PlayerHand[] = [
       { cards: this.player, bet: this.bet, surrendered: false, actions: [] },
     ];
 
@@ -232,7 +242,7 @@ export class Game {
   }
 
   private async decideLoop(
-    hands: { cards: Card[]; bet: number; surrendered: boolean; actions: PlayerAction[] }[],
+    hands: PlayerHand[],
   ): Promise<void> {
     for (;;) {
       const actions = legalActions(this.player, this.splitsUsed, this.bankroll, this.bet);
@@ -299,12 +309,13 @@ export class Game {
           this.running += hiLo(extra);
         }
 
-        const sibling: { cards: Card[]; bet: number; surrendered: boolean; actions: PlayerAction[] } = {
+        const sibling: PlayerHand = {
           cards: [second!],
           bet: this.bet,
           surrendered: false,
           actions: [],
         };
+
         const extra2 = draw(this.shoe);
 
         if (extra2) {

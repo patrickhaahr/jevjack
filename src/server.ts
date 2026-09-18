@@ -51,6 +51,7 @@ function logEvent(event: TableEvent): void {
     const playerCards = event.playerCards.map(parseCard);
     const { total, soft } = handValue(playerCards);
     const dealerUpcard = event.dealerCards[0] ?? "";
+
     const advice = basicStrategyAction({
       playerTotal: total,
       playerSoft: soft,

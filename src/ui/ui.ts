@@ -214,8 +214,6 @@ function renderLog(history: HandRecord[]): void {
   }
 }
 
-let lastKind: string | null = null;
-
 function render(e: TableEvent): void {
   const hideHole = e.dealerHoleHidden;
   renderCards($("dealer-cards"), e.dealerCards, false);
@@ -263,8 +261,6 @@ function render(e: TableEvent): void {
     msg.textContent = "New shoe";
     msg.className = "table-message";
   }
-
-  lastKind = e.kind;
 }
 
 function connect(): EventSource {

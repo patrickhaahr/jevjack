@@ -50,7 +50,7 @@ async function runMode(tag: string, model: Model): Promise<ModeStats> {
 
       if (decision.action !== advice && state.legalActions.includes(advice)) stats.deviations++;
 
-      return decision as Awaited<ReturnType<Model["decide"]>>;
+      return decision;
     },
   };
 
@@ -72,6 +72,7 @@ const results = await Promise.all([
 ]);
 
 console.log("mode        hands  net      final    deviations  decisions");
+
 for (const r of results) {
   console.log(
     `${r.tag.padEnd(12)}${String(r.hands).padEnd(7)}${String(r.net).padEnd(9)}$${String(r.net + START_BANKROLL).padEnd(9)}${String(r.deviations).padEnd(12)}${r.decisions}`,

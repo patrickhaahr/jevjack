@@ -116,7 +116,7 @@ describe("Game loop", () => {
   test("illegal model answers fall back to stand", async () => {    const rogue: Model = {
       name: "rogue",
       usesAdvice: false,
-      async decide(state: JevState): Promise<JevDecision> {
+      async decide(_state: JevState): Promise<JevDecision> {
         return {
           action: "split", // rarely legal; fallback should clamp to stand
           probabilities: {},
