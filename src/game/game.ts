@@ -21,8 +21,8 @@ import {
   type Card,
   type HandOutcome,
   type PlayerAction,
-} from "./engine";
-import { buildJevState, type JevDecision, type JevState, type Model } from "./jev";
+} from "../engine/engine";
+import { buildJevState, type JevDecision, type JevState, type Model } from "../jev/jev";
 
 export type Phase = "idle" | "dealing" | "player" | "dealer" | "settled";
 

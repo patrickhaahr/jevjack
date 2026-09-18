@@ -5,9 +5,9 @@
  */
 
 import { appendFileSync } from "node:fs";
-import { handValue, type Card } from "./engine";
-import { Game, type TableEvent } from "./game";
-import { basicStrategyAction, createModel } from "./jev";
+import { handValue, type Card } from "./engine/engine";
+import { Game, type TableEvent } from "./game/game";
+import { basicStrategyAction, createModel } from "./jev/jev";
 
 const PORT = Number(process.env.PORT ?? 3000);
 
@@ -120,11 +120,11 @@ async function runLoop(): Promise<void> {
   running = false;
 }
 
-const page = await Bun.file(new URL("./index.html", import.meta.url).pathname).text();
+const page = await Bun.file(new URL("./ui/index.html", import.meta.url).pathname).text();
 
 // Browsers cannot execute TypeScript, so the browser script is transpiled at startup.
 const uiJs = await new Bun.Transpiler({ loader: "ts" }).transform(
-  await Bun.file(new URL("./ui.ts", import.meta.url).pathname).text(),
+  await Bun.file(new URL("./ui/ui.ts", import.meta.url).pathname).text(),
 );
 
 Bun.serve({
@@ -144,7 +144,7 @@ Bun.serve({
     }
 
     if (req.method === "GET" && pathname === "/style.css") {
-      return new Response(Bun.file(new URL("./style.css", import.meta.url).pathname), {
+      return new Response(Bun.file(new URL("./ui/style.css", import.meta.url).pathname), {
         headers: { "content-type": "text/css; charset=utf-8" },
       });
     }

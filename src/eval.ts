@@ -7,8 +7,8 @@
  *     bun run eval.ts [hands]
  */
 
-import { basicStrategyAction, JevModel, MockModel, type JevState, type Model } from "./jev";
-import { Game } from "./game";
+import { basicStrategyAction, JevModel, MockModel, type JevState, type Model } from "./jev/jev";
+import { Game } from "./game/game";
 
 const HANDS = Number(process.argv[2] ?? 150);
 

@@ -1,12 +1,12 @@
 {
   "name": "jevjack",
-  "module": "index.ts",
+  "module": "src/index.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "bun server.ts",
+    "start": "bun src/server.ts",
     "typecheck": "tsc --noEmit",
-    "eval": "bun eval.ts"
+    "eval": "bun src/eval.ts"
   },
   "devDependencies": {
     "@oxlint/plugins": "1.83.0",

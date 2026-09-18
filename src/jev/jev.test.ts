@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { buildJevState, cardLabel, createModel } from "./jev";
-import { BET, legalActions, newShoe, type Card } from "./engine";
+import { BET, legalActions, newShoe, type Card } from "../engine/engine";
 
 const c = (rank: Card["rank"], suit: Card["suit"] = "S"): Card => ({ rank, suit });
 

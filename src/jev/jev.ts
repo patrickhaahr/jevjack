@@ -12,7 +12,7 @@ import {
   trueCount,
   type Card,
   type PlayerAction,
-} from "./engine";
+} from "../engine/engine";
 
 /** The table as the model sees it. Built only by buildJevState, so values stay JSON-safe. */
 export interface JevState {

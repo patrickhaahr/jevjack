@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { Game } from "./game";
-import type { JevDecision, JevState, Model } from "./jev";
-import { BET, type HandOutcome } from "./engine";
+import type { JevDecision, JevState, Model } from "../jev/jev";
+import { BET, type HandOutcome } from "../engine/engine";
 
 /** Deterministic model: always picks the given action, fixed probabilities. */
 function stubModel(action: "hit" | "stand" | "double" | "split" | "surrender"): Model {
