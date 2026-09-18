@@ -28,10 +28,48 @@ describe("buildJevState", () => {
     expect(s.legalActions).toContain("double");
     expect(s.recentOutcomes).toEqual(["win", "lose"]);
   });
+
+  test("basicStrategy advice covers surrender and hit spots", () => {
+    const base = {
+      bet: BET,
+      bankroll: 100,
+      bankrollStart: 100,
+      shoe: newShoe(),
+      runningCount: 0,
+      handsPlayed: 0,
+      recentOutcomes: [],
+    };
+
+    // Hard 16 vs dealer 10 with surrender available: basic strategy surrenders.
+    expect(buildJevState({
+      player: [c("10"), c("6")],
+      dealerUpcard: c("10", "H"),
+      legalActions: ["hit", "stand", "surrender"],
+      ...base,
+    }).basicStrategy).toBe("surrender");
+
+    // Soft 18 vs dealer 10: basic strategy hits.
+    expect(buildJevState({
+      player: [c("A"), c("7")],
+      dealerUpcard: c("10", "H"),
+      legalActions: ["hit", "stand", "double"],
+      ...base,
+    }).basicStrategy).toBe("hit");
+
+    // Hard 12 vs dealer 6: basic strategy stands.
+    expect(buildJevState({
+      player: [c("8"), c("4")],
+      dealerUpcard: c("6", "D"),
+      legalActions: ["hit", "stand"],
+      ...base,
+    }).basicStrategy).toBe("stand");
+  });
 });
 
 describe("MockModel", () => {
-  const model = createModel(); // MODEL unset in tests -> mock
+  // A local .env may set MODEL=jev; tests must stay offline and deterministic.
+  process.env.MODEL = "mock";
+  const model = createModel();
 
   test("hard 20 stands, hard 5 hits", async () => {
     const shoe = newShoe();

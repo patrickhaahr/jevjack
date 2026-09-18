@@ -7,6 +7,7 @@ import { BET, type HandOutcome } from "./engine";
 function stubModel(action: "hit" | "stand" | "double" | "split" | "surrender"): Model {
   return {
     name: "stub",
+    usesAdvice: false,
     async decide(state: JevState): Promise<JevDecision> {
       const probabilities: Record<string, number> = {};
 
@@ -92,9 +93,29 @@ describe("Game loop", () => {
     expect(snap.dealerHoleHidden).toBe(false);
   });
 
-  test("illegal model answers fall back to stand", async () => {
-    const rogue: Model = {
+  test("split model plays two settled hands per split round", async () => {
+    const game = new Game(stubModel("split"), seeded(21));
+    const ends: number[] = [];
+    game.onEvent((e) => {
+      if (e.kind === "hand_end") ends.push(e.handNumber);
+    });
+
+    for (let i = 0; i < 60; i++) await game.playHand();
+
+    const counts = new Map<number, number>();
+
+    for (const h of ends) counts.set(h, (counts.get(h) ?? 0) + 1);
+
+    const splitRounds = [...counts.values()].filter((n) => n === 2).length;
+    // Seeded shuffle guarantees some pair within 60 hands; a split round must
+    // settle as two hands, and only one split is legal per round.
+    expect(splitRounds).toBeGreaterThan(0);
+    expect(splitRounds).toBeLessThan(ends.length / 2);
+  });
+
+  test("illegal model answers fall back to stand", async () => {    const rogue: Model = {
       name: "rogue",
+      usesAdvice: false,
       async decide(state: JevState): Promise<JevDecision> {
         return {
           action: "split", // rarely legal; fallback should clamp to stand

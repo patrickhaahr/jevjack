@@ -31,6 +31,15 @@ export const PENETRATION = 0.75;
 
 export const BET = 10;
 
+/**
+ * Bet for the round, scaled by the Hi-Lo true count (edge grows with the
+ * count). Uncapped by design; the bankroll is the only ceiling. Never below
+ * the table minimum.
+ */
+export function betForCount(trueCount: number): number {
+  return Math.max(BET, Math.round(BET * trueCount));
+}
+
 /** Card value in blackjack points; aces count as 11 until soft totals say otherwise. */
 export function cardValue(rank: Rank): number {
   if (rank === "A") return 11;
@@ -139,7 +148,8 @@ export function trueCount(running: number, shoe: readonly Card[]): number {
   return running / decksLeft;
 }
 
-/** Legal actions given the current hand. Split needs a pair and available bankroll. */
+/** Legal actions given the current hand. Double and split need the bankroll to
+ * cover another bet on top of the stake already on the felt. */
 export function legalActions(
   player: readonly Card[],
   splitsUsed: number,
@@ -153,9 +163,9 @@ export function legalActions(
 
   if (firstTwo && total === 21) return ["stand"]; // blackjack or made 21
 
-  if (firstTwo && bankroll >= bet) actions.push("double");
+  if (firstTwo && bankroll >= bet * 2) actions.push("double");
 
-  if (firstTwo && splitsUsed === 0 && player[0]!.rank === player[1]!.rank && bankroll >= bet) {
+  if (firstTwo && splitsUsed === 0 && player[0]!.rank === player[1]!.rank && bankroll >= bet * 2) {
     actions.push("split");
   }
 

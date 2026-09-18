@@ -29,6 +29,7 @@ interface TableEvent {
   kind: "hand_start" | "decision" | "hand_end" | "shoe_shuffle" | "error";
   phase: string;
   handNumber: number;
+  bet: number;
   playerCards: string[];
   dealerCards: string[];
   dealerHoleHidden: boolean;
@@ -205,10 +206,14 @@ function render(e: TableEvent): void {
   $("dealer-total").textContent = dealerShown.length ? `showing ${handTotal(dealerShown)}` : "";
   $("player-total").textContent = e.playerCards.length ? handTotal(e.playerCards) : "";
   $("hand-count").textContent = `hand ${e.handNumber}`;
-  $("shoe-fraction").textContent = `shoe ${Math.round(e.shoeFraction * 100)}%`;
+  $("bet-tag").textContent = `bet $${e.bet}`;
+  $("shoe-meter").textContent = `shoe ${Math.round(e.shoeFraction * 100)}%`;
   $("count-tag").textContent = `count ${e.trueCount > 0 ? "+" : ""}${e.trueCount}`;
 
-  if (e.decision) renderProbs(e.decision, e.legalActions);
+  if (e.decision) {
+    renderProbs(e.decision, e.legalActions);
+    $("model-tag").textContent = `model: ${e.decision.model}`;
+  }
 
   if (e.kind === "hand_end") {
     bankrollSeries.push(e.bankroll);

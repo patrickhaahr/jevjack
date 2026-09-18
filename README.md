@@ -21,7 +21,10 @@ reset bankroll.
 - `jev.ts` — one System One request per decision. `action` is a Choice over
   hit/stand/double/split/surrender; `win_probability` and `hand_quality` are
   speculative Scores in the same call. `MODEL=mock` swaps in a basic-strategy
-  heuristic so the loop runs offline.
+  heuristic so the loop runs offline. `ADVICE=off` withholds the code-computed
+  `basicStrategy` field and switches to a free-form question, for A/B runs.
+- `eval.ts` — side-by-side A/B: same seeded hands with the advice helper on,
+  off, and the mock reference. `bun run eval.ts [hands]`.
 - `game.ts` — the loop: deal, ask, execute until stand/bust, dealer plays,
   settle, log. One event per state change over SSE.
 - `server.ts` — Bun.serve: page, POST /api/decision (peek at Jev's answer

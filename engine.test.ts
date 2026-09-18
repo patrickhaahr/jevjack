@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
   BET,
+  betForCount,
   cardValue,
   dealerShouldHit,
   dealInitial,
@@ -64,19 +65,19 @@ describe("shoe", () => {
 
 describe("legalActions", () => {
   test("two cards: hit, stand, double, split, surrender", () => {
-    expect(legalActions([c("8"), c("8")], 0, BET, BET)).toEqual(["hit", "stand", "double", "split", "surrender"]);
+    expect(legalActions([c("8"), c("8")], 0, BET * 2, BET)).toEqual(["hit", "stand", "double", "split", "surrender"]);
   });
   test("insufficient bankroll blocks double and split", () => {
-    expect(legalActions([c("8"), c("8")], 0, BET - 1, BET)).toEqual(["hit", "stand", "surrender"]);
+    expect(legalActions([c("8"), c("8")], 0, BET * 2 - 1, BET)).toEqual(["hit", "stand", "surrender"]);
   });
   test("21 on two cards only allows stand", () => {
-    expect(legalActions([c("A"), c("K")], 0, BET, BET)).toEqual(["stand"]);
+    expect(legalActions([c("A"), c("K")], 0, BET * 2, BET)).toEqual(["stand"]);
   });
   test("three cards: no double, split, surrender", () => {
-    expect(legalActions([c("5"), c("5"), c("2")], 0, BET, BET)).toEqual(["hit", "stand"]);
+    expect(legalActions([c("5"), c("5"), c("2")], 0, BET * 2, BET)).toEqual(["hit", "stand"]);
   });
   test("split already used removes split", () => {
-    expect(legalActions([c("9"), c("9")], 1, BET, BET)).toEqual(["hit", "stand", "double", "surrender"]);
+    expect(legalActions([c("9"), c("9")], 1, BET * 2, BET)).toEqual(["hit", "stand", "double", "surrender"]);
   });
 });
 
@@ -148,5 +149,15 @@ describe("simulation sanity", () => {
     expect(bankroll).toBeLessThan(0);
     expect(bankroll).toBeGreaterThan(-0.21 * 2000 * BET);
     expect(rounds).toBe(2000);
+  });
+});
+
+describe("betForCount", () => {
+  test("never below table minimum, scales with the count, uncapped", () => {
+    expect(betForCount(-5)).toBe(BET);
+    expect(betForCount(0.4)).toBe(BET);
+    expect(betForCount(2)).toBe(2 * BET);
+    expect(betForCount(7)).toBe(7 * BET);
+    expect(betForCount(100)).toBe(100 * BET);
   });
 });

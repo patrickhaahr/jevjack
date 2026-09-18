@@ -4,12 +4,17 @@
  * control endpoints drive the loop from the UI.
  */
 
+import { appendFileSync } from "node:fs";
+import { handValue, type Card } from "./engine";
 import { Game, type TableEvent } from "./game";
-import { createModel } from "./jev";
+import { basicStrategyAction, createModel } from "./jev";
 
 const PORT = Number(process.env.PORT ?? 3000);
 
 const DECISION_PAUSE_MS = Number(process.env.DECISION_PAUSE_MS ?? 400);
+
+// Set DECISION_LOG to a path to append every decision and settlement as JSONL.
+const DECISION_LOG = process.env.DECISION_LOG ?? "";
 
 const game = new Game(createModel());
 
@@ -29,7 +34,72 @@ function broadcast(event: TableEvent): void {
   }
 }
 
-game.onEvent(broadcast);
+game.onEvent((event) => {
+  broadcast(event);
+  logEvent(event);
+});
+
+function parseCard(label: string): Card {
+  // SAFETY: server emits labels via cardLabel over real Cards.
+  return { rank: (label.startsWith("10") ? "10" : label[0]) as Card["rank"], suit: label.slice(-1) as Card["suit"] };
+}
+
+function logEvent(event: TableEvent): void {
+  if (!DECISION_LOG) return;
+
+  if (event.kind === "decision" && event.decision && event.legalActions.length > 0) {
+    const playerCards = event.playerCards.map(parseCard);
+    const { total, soft } = handValue(playerCards);
+    const dealerUpcard = event.dealerCards[0] ?? "";
+    const advice = basicStrategyAction({
+      playerTotal: total,
+      playerSoft: soft,
+      dealerUpcard,
+      playerCards: event.playerCards,
+      legalActions: event.legalActions,
+    });
+
+    appendFileSync(
+      DECISION_LOG,
+      `${JSON.stringify({
+        ts: new Date().toISOString(),
+        kind: "decision",
+        hand: event.handNumber,
+        model: event.decision.model,
+        bet: event.bet,
+        player: event.playerCards,
+        total,
+        soft,
+        dealerUpcard,
+        legal: event.legalActions,
+        chosen: event.decision.action,
+        advice,
+        deviates: event.decision.action !== advice && event.legalActions.includes(advice),
+        trueCount: event.trueCount,
+        confidence: event.decision.confidence,
+        probs: event.decision.probabilities,
+        latencyMs: event.decision.latencyMs,
+      })}\n`,
+    );
+
+    return;
+  }
+
+  if (event.kind === "hand_end" && event.outcome) {
+    appendFileSync(
+      DECISION_LOG,
+      `${JSON.stringify({
+        ts: new Date().toISOString(),
+        kind: "hand_end",
+        hand: event.handNumber,
+        bet: event.bet,
+        outcome: event.outcome.kind,
+        delta: event.outcome.delta,
+        bankroll: event.bankroll,
+      })}\n`,
+    );
+  }
+}
 
 let running = false;
 
@@ -52,6 +122,11 @@ async function runLoop(): Promise<void> {
 
 const page = await Bun.file(new URL("./index.html", import.meta.url).pathname).text();
 
+// Browsers cannot execute TypeScript, so the browser script is transpiled at startup.
+const uiJs = await new Bun.Transpiler({ loader: "ts" }).transform(
+  await Bun.file(new URL("./ui.ts", import.meta.url).pathname).text(),
+);
+
 Bun.serve({
   port: PORT,
   fetch(req) {
@@ -63,7 +138,7 @@ Bun.serve({
     }
 
     if (req.method === "GET" && pathname === "/ui.js") {
-      return new Response(Bun.file(new URL("./ui.ts", import.meta.url).pathname), {
+      return new Response(uiJs, {
         headers: { "content-type": "text/javascript; charset=utf-8" },
       });
     }
