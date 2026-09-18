@@ -1,5 +1,7 @@
 # Jevjack
 
+https://github.com/user-attachments/assets/867137a4-3879-47a3-821c-b2d70ecb8157
+
 Jev plays blackjack. A Bun server deals, asks the TypeSafe Jev model for one
 typed decision per player action, and executes it. A browser page shows the
 table, Jev's probability bars, and the bankroll over time.
@@ -9,13 +11,6 @@ table, Jev's probability bars, and the bankroll over time.
     cp .env.example .env
     bun install
     bun run start
-
-`.env` keys: `TYPESAFE_API_KEY` (already set in this shell; leave unset to run
-offline), `MODEL` (mock | jev), `ADVICE` (on | off), `DECISION_LOG` (optional
-JSONL path), `PORT`, `DECISION_PAUSE_MS`.
-
-Open http://localhost:3000. Controls: run/pause, step one decision, new shoe,
-reset bankroll.
 
 ## How it works
 
@@ -33,8 +28,3 @@ reset bankroll.
   settle, log. One event per state change over SSE.
 - `src/server.ts` — Bun.serve: page, POST /api/decision (peek at Jev's answer
   without executing), GET /api/events.
-
-## Test
-
-    bun test        # engine rules + mock model
-    bun run typecheck
