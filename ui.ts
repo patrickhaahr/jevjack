@@ -74,21 +74,39 @@ function cardEl(label: string, hidden: boolean): HTMLElement {
 
   const { rank, suit } = parseCard(label);
   div.classList.add(isRed(suit) ? "red" : "black");
-  const top = document.createElement("span");
-  top.className = "card-rank";
-  top.textContent = rank;
-  const mid = document.createElement("span");
-  mid.className = "card-suit";
-  mid.textContent = suitGlyph(suit);
-  div.append(top, mid);
+  const glyph = suitGlyph(suit);
+
+  const corner = (cls: string): HTMLElement => {
+    const c = document.createElement("span");
+    c.className = cls;
+    const r = document.createElement("span");
+    r.className = "card-rank";
+    r.textContent = rank;
+    const s = document.createElement("span");
+    s.className = "card-suit";
+    s.textContent = glyph;
+    c.append(r, s);
+
+    return c;
+  };
+
+  const main = document.createElement("span");
+  main.className = "card-suit-main";
+  main.textContent = glyph;
+  div.append(corner("card-corner tl"), main, corner("card-corner br"));
 
   return div;
 }
 
 function renderCards(container: HTMLElement, labels: string[], hideLast: boolean): void {
+  // Animate only newly dealt cards; existing cards must not replay the deal-in.
+  const prev = container.children.length;
   container.replaceChildren();
   labels.forEach((label, i) => {
-    container.append(cardEl(label, hideLast && i === labels.length - 1));
+    const el = cardEl(label, hideLast && i === labels.length - 1);
+
+    if (i >= prev) el.classList.add("card-in");
+    container.append(el);
   });
 }
 
@@ -234,16 +252,16 @@ function render(e: TableEvent): void {
     }));
 
     msg.textContent = text.get(e.outcome.kind) ?? e.outcome.kind;
-    msg.className = "table-msg outcome-" + e.outcome.kind;
+    msg.className = "table-message outcome-" + e.outcome.kind;
   } else if (e.decision && e.kind === "decision") {
     msg.textContent = `Jev: ${e.decision.action}`;
-    msg.className = "table-msg";
+    msg.className = "table-message";
   } else if (e.kind === "error") {
     msg.textContent = e.message ?? "error";
-    msg.className = "table-msg outcome-lose";
+    msg.className = "table-message outcome-lose";
   } else if (e.kind === "shoe_shuffle") {
     msg.textContent = "New shoe";
-    msg.className = "table-msg";
+    msg.className = "table-message";
   }
 
   lastKind = e.kind;

@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b0b0f" />
   <title>jevjack — Jev plays blackjack</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
@@ -17,15 +18,17 @@
 
   <main>
     <section class="table-wrap">
-      <div class="dealer-row">
+      <div class="dealer-seat">
         <div class="seat-label">dealer</div>
         <div class="cards" id="dealer-cards"></div>
         <div class="hand-total" id="dealer-total"></div>
       </div>
 
-      <div class="table-center" id="table-message">Press run to deal.</div>
+      <div class="inlay" aria-hidden="true">blackjack pays 3 to 2</div>
 
-      <div class="player-row">
+      <div class="table-message" id="table-message">Press run to deal.</div>
+
+      <div class="player-seat">
         <div class="cards" id="player-cards"></div>
         <div class="hand-total" id="player-total"></div>
         <div class="seat-label">jev</div>
@@ -37,10 +40,12 @@
         <button id="btn-stop">Pause</button>
         <button id="btn-reset">Reset</button>
         <span class="spacer"></span>
-        <span id="hand-count">hand 0</span>
-        <span id="bet-tag" title="bet for this hand">bet —</span>
-        <span id="shoe-meter" title="fraction of shoe remaining">shoe —</span>
-        <span id="count-tag" title="Hi-Lo true count">count —</span>
+        <span class="table-stats">
+          <span id="hand-count">hand 0</span>
+          <span id="bet-tag" title="bet for this hand">bet —</span>
+          <span id="shoe-meter" title="fraction of shoe remaining">shoe —</span>
+          <span id="count-tag" title="Hi-Lo true count">count —</span>
+        </span>
       </div>
     </section>
 
